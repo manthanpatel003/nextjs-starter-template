@@ -8,6 +8,7 @@ const nextConfig = {
     images: {
         domains: process.env.NEXT_PUBLIC_ALLOWED_IMAGE_DOMAINS?.split(',') || ['example.com'],
     },
+  
     // Uncomment and modify to enable Internationalization (i18n)
     // i18n: {
     //   locales: ['en-US', 'fr', 'es'], // Example locales
