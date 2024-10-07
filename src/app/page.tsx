@@ -1,9 +1,10 @@
-import { Toaster } from 'react-hot-toast';
+"use client";
+import HomePage from "@/pages/HomePage/HomePage";
 
 export default function Home() {
   return (
     <main>
-      <Toaster />
+      <HomePage />
     </main>
   );
 }

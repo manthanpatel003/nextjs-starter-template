@@ -21,7 +21,23 @@ Once the server is running, open [http://localhost:3000](http://localhost:3000) 
 
 ### ✨ Live Editing
 
-You can start editing the page by modifying the `app/page.tsx` file. The page will auto-update as you make changes, allowing for a seamless development experience.
+## Creating a New Component
+
+You can use the `createComponent.ps1` script to quickly generate a new component. Run the following command in your terminal:
+
+```powershell
+./createComponent.ps1 ComponentName
+```
+
+Replace `ComponentName` with the desired name of your new component. This script will create a new folder with the necessary files for your component.
+
+```
+├──components/
+│  └──[ComponentName]/
+│     ├── [ComponentName].tsx
+│     ├── [ComponentName].module.css
+│     └── index.ts
+```
 
 ### 🎨 Fonts Optimization
 
