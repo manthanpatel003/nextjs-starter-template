@@ -18,7 +18,23 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Creating a New Component
+
+You can use the `createComponent.ps1` script to quickly generate a new component. Run the following command in your terminal:
+
+```powershell
+./createComponent.ps1 ComponentName
+```
+
+Replace `ComponentName` with the desired name of your new component. This script will create a new folder with the necessary files for your component.
+
+```
+├──components/
+│  └──[ComponentName]/
+│     ├── [ComponentName].tsx
+│     ├── [ComponentName].module.css
+│     └── index.ts
+```
 
 ## Learn More
 

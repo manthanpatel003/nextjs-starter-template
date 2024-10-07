@@ -1,15 +1,11 @@
-import { removeAuthToken, removeUser } from '@/redux/reducers/authSlice';
-import { store } from '@/redux/store';
-import axios, { AxiosRequestConfig } from 'axios';
-import { useRouter } from 'next/router';
-import { useCallback } from 'react';
-import toast from 'react-hot-toast';
-import { useDispatch } from 'react-redux';
-
-// Define the type for the API call parameters
-interface ApiCallParams extends AxiosRequestConfig {
-  headers?: Record<string, string>; // Optional headers
-}
+import { removeAuthToken, removeUser } from "@/redux/reducers/authSlice";
+import { store } from "@/redux/store";
+import { ApiCallParams, ErrorResponse } from "@/utils/types";
+import axios, { AxiosError } from "axios";
+import { useRouter } from "next/router";
+import { useCallback } from "react";
+import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
 
 /**
  * Returns a function that can be used to call an API.
@@ -20,14 +16,14 @@ const useAxios = () => {
   const dispatch = useDispatch();
 
   const callApi = useCallback(
-    async ({ headers, ...rest }: ApiCallParams): Promise<any> => {
+    async ({ headers, ...rest }: ApiCallParams): Promise<unknown> => {
       try {
-        const idToken = store.getState().user;
+        const { authToken } = store.getState().app.user;
 
         const { data } = await axios({
           headers: {
-            'Content-Type': 'application/json',
-            authorization: `Bearer ${idToken?.authToken}`,
+            "Content-Type": "application/json",
+            authorization: `Bearer ${authToken}`,
             ...headers,
           },
           ...rest,
@@ -35,28 +31,34 @@ const useAxios = () => {
         });
 
         return data;
-      } catch (err: any) {
-        // Use `any` if the error type is not known
-        if (err?.code === 'ERR_NETWORK') {
-          dispatch(removeAuthToken());
-          dispatch(removeUser());
-          router.push('/');
-          toast.error(
-            'Server is under maintenance mode. Please try after sometime',
-          );
+      } catch (err) {
+        const axiosError = err as AxiosError;
 
-          return;
-        } else if (err.response?.status === 401) {
-          router.push('/');
-          dispatch(removeUser());
-          dispatch(removeAuthToken());
-          toast.error(err?.response?.data?.message || 'Unauthorized');
-        } else if (err.response?.status === 503) {
-          router.push('/404');
+        if (axiosError.isAxiosError) {
+          if (axiosError.code === "ERR_NETWORK") {
+            dispatch(removeAuthToken());
+            dispatch(removeUser());
+            router.push("/");
+            toast.error(
+              "Server is under maintenance mode. Please try again later.",
+            );
+
+            return;
+          } else if (axiosError.response?.status === 401) {
+            router.push("/");
+            dispatch(removeUser());
+            dispatch(removeAuthToken());
+
+            const errorResponse = axiosError.response?.data as ErrorResponse;
+            toast.error(errorResponse.message || "Unauthorized");
+          } else if (axiosError.response?.status === 503) {
+            router.push("/404");
+          }
         }
-        throw err;
+
+        // Re-throw the error for further handling
+        throw axiosError;
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     },
     [dispatch, router], // Added dependencies for useCallback
   );

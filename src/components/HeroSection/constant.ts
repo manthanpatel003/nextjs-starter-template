@@ -1,0 +1,1 @@
+// Constants for HeroSection component
